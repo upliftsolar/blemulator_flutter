@@ -1,8 +1,8 @@
 part of internal;
 
 mixin ErrorChecksMixin on SimulationManagerBase {
-  Future<void> _errorIfConnected(String identifier) async {
-    if (_peripherals[identifier].isConnected()) {
+  Future<void> _errorIfConnected(String? identifier) async {
+    if (_peripherals[identifier!]!.isConnected()) {
       return Future.error(
         SimulatedBleError(
           BleErrorCode.DeviceAlreadyConnected,
@@ -12,8 +12,8 @@ mixin ErrorChecksMixin on SimulationManagerBase {
     }
   }
 
-  Future<void> _errorIfNotConnected(String identifier) async {
-    if (!_peripherals[identifier].isConnected()) {
+  Future<void> _errorIfNotConnected(String? identifier) async {
+    if (!_peripherals[identifier!]!.isConnected()) {
       return Future.error(
         SimulatedBleError(
           BleErrorCode.DeviceNotConnected,
@@ -23,8 +23,8 @@ mixin ErrorChecksMixin on SimulationManagerBase {
     }
   }
 
-  Future<void> _errorIfDisconnected(String identifier) async {
-    if (!_peripherals[identifier].isConnected()) {
+  Future<void> _errorIfDisconnected(String? identifier) async {
+    if (!_peripherals[identifier!]!.isConnected()) {
       return Future.error(
         SimulatedBleError(
           BleErrorCode.DeviceDisconnected,
@@ -56,8 +56,8 @@ mixin ErrorChecksMixin on SimulationManagerBase {
     }
   }
 
-  Future<void> _errorIfUnknown(String identifier) async {
-    if (_peripherals[identifier] == null) {
+  Future<void> _errorIfUnknown(String? identifier) async {
+    if (_peripherals[identifier!] == null) {
       return Future.error(
         SimulatedBleError(
           BleErrorCode.DeviceNotFound,
@@ -67,8 +67,8 @@ mixin ErrorChecksMixin on SimulationManagerBase {
     }
   }
 
-  Future<void> _errorIfCannotConnect(String identifier) async {
-    var canConnect = await _peripherals[identifier].onConnectRequest();
+  Future<void> _errorIfCannotConnect(String? identifier) async {
+    var canConnect = await _peripherals[identifier!]!.onConnectRequest();
     if (!canConnect) {
       return Future.error(
         SimulatedBleError(
@@ -142,8 +142,8 @@ mixin ErrorChecksMixin on SimulationManagerBase {
 
   Future<void> _errorIfDescriptorNotFound(
     SimulatedDescriptor descriptor, {
-    String descriptorUuid,
-    int descriptorId,
+    String? descriptorUuid,
+    int? descriptorId,
   }) async {
     if (descriptor == null) {
       return Future.error(

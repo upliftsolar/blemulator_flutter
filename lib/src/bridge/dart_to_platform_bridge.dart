@@ -1,7 +1,7 @@
 part of internal;
 
 class DartToPlatformBridge {
-  MethodChannel _dartToPlatformChannel;
+  late MethodChannel _dartToPlatformChannel;
 
   DartToPlatformBridge() {
     _dartToPlatformChannel = MethodChannel(ChannelName.dartToPlatform);
@@ -37,7 +37,7 @@ class DartToPlatformBridge {
                 _connectionStateToString(connectionState),
           });
 
-  String _connectionStateToString(
+  String? _connectionStateToString(
       flutter_ble_lib.PeripheralConnectionState state) {
     switch (state) {
       case flutter_ble_lib.PeripheralConnectionState.connecting:
@@ -54,10 +54,10 @@ class DartToPlatformBridge {
   }
 
   Future<void> publishCharacteristicUpdate(
-    String peripheralId,
+    String? peripheralId,
     SimulatedCharacteristic characteristic,
-    Uint8List value,
-    String transactionId,
+    Uint8List? value,
+    String? transactionId,
   ) =>
       _dartToPlatformChannel.invokeMethod(
         SimulationPlatformMethodName.publishCharacteristicUpdate,
@@ -69,10 +69,10 @@ class DartToPlatformBridge {
       );
 
   Future<void> publishCharacteristicMonitoringError(
-    String peripheralId,
-    int characteristicId,
+    String? peripheralId,
+    int? characteristicId,
     SimulatedBleError bleError,
-    String transactionId,
+    String? transactionId,
   ) =>
       _dartToPlatformChannel.invokeMethod(
           SimulationPlatformMethodName.publishCharacteristicMonitoringError,

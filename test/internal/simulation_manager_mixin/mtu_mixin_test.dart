@@ -7,7 +7,7 @@ import '../../factory/simulation_manager_factory.dart';
 void main() {
   const DEVICE_ID = 'qwe123';
   const MTU = 33;
-  PeripheralMtuMixin peripheralMtuMixin;
+  late PeripheralMtuMixin peripheralMtuMixin;
 
   setUp(() {
      peripheralMtuMixin = SimulationManagerFactory().create()

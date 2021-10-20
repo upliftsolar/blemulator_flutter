@@ -4,13 +4,13 @@ class SimulatedService {
   final String uuid;
   final int id;
   final bool isAdvertised;
-  final String convenienceName;
-  final Map<int, SimulatedCharacteristic> _characteristics;
+  final String? convenienceName;
+  final Map<int?, SimulatedCharacteristic> _characteristics;
 
   SimulatedService(
-      {@required String uuid,
-      @required this.isAdvertised,
-      @required List<SimulatedCharacteristic> characteristics,
+      {required String uuid,
+      required this.isAdvertised,
+      required List<SimulatedCharacteristic> characteristics,
       this.convenienceName})
       : uuid = uuid.toLowerCase(),
         _characteristics = Map.fromIterable(characteristics, key: (v) => v.id),
@@ -21,11 +21,9 @@ class SimulatedService {
   List<SimulatedCharacteristic> characteristics() =>
       _characteristics.values.toList();
 
-  SimulatedCharacteristic characteristic(int id) => _characteristics[id];
+  SimulatedCharacteristic? characteristic(int id) => _characteristics[id];
 
-  SimulatedCharacteristic characteristicByUuid(String uuid) =>
-      _characteristics.values.firstWhere(
-          (characteristic) =>
-              characteristic.uuid.toLowerCase() == uuid.toLowerCase(),
-          orElse: () => null);
+  SimulatedCharacteristic? characteristicByUuid(String uuid) =>
+      _characteristics.values.firstWhereOrNull((characteristic) =>
+          characteristic.uuid.toLowerCase() == uuid.toLowerCase());
 }

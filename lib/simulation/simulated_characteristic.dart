@@ -3,9 +3,9 @@ part of blemulator;
 class SimulatedCharacteristic {
   final String uuid;
   final int id;
-  SimulatedService service;
-  Uint8List _value;
-  final String convenienceName;
+  late SimulatedService service;
+  Uint8List? _value;
+  final String? convenienceName;
   final bool isReadable;
   final bool isWritableWithResponse;
   final bool isWritableWithoutResponse;
@@ -14,11 +14,11 @@ class SimulatedCharacteristic {
   final bool isIndicatable;
   final Map<int, SimulatedDescriptor> _descriptors;
 
-  StreamController<Uint8List> _streamController;
+  StreamController<Uint8List?>? _streamController;
 
   SimulatedCharacteristic({
-    @required String uuid,
-    @required Uint8List value,
+    required String uuid,
+    required Uint8List value,
     this.convenienceName,
     this.isReadable = true,
     this.isWritableWithResponse = true,
@@ -39,36 +39,35 @@ class SimulatedCharacteristic {
 
   void attachToService(SimulatedService service) => this.service = service;
 
-  Future<Uint8List> read() async => _value;
+  Future<Uint8List?> read() async => _value;
 
-  Future<void> write(Uint8List value, {bool sendNotification = true}) async {
+  Future<void> write(Uint8List? value, {bool sendNotification = true}) async {
     _value = value;
     if (sendNotification && _streamController?.hasListener == true) {
-      _streamController.sink.add(value);
+      _streamController!.sink.add(value);
     }
   }
 
-  Stream<Uint8List> monitor() {
+  Stream<Uint8List?> monitor() {
     _streamController ??= StreamController.broadcast(
       onListen: () {
         isNotifying = true;
       },
       onCancel: () {
         isNotifying = false;
-        _streamController.close();
+        _streamController!.close();
         _streamController = null;
       },
     );
-    return _streamController.stream;
+    return _streamController!.stream;
   }
 
   List<SimulatedDescriptor> descriptors() => _descriptors.values.toList();
 
-  SimulatedDescriptor descriptor(int id) => _descriptors[id];
+  SimulatedDescriptor? descriptor(int id) => _descriptors[id];
 
-  SimulatedDescriptor descriptorByUuid(String uuid) =>
-      _descriptors.values.firstWhere(
+  SimulatedDescriptor? descriptorByUuid(String uuid) =>
+      _descriptors.values.firstWhereOrNull(
         (descriptor) => descriptor.uuid.toLowerCase() == uuid.toLowerCase(),
-        orElse: () => null,
       );
 }

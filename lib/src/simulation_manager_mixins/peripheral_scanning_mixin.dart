@@ -7,7 +7,7 @@ mixin PeripheralScanningMixing on SimulationManagerBase {
     _peripherals.values.forEach((peripheral) {
       _scanSubscriptions
           .add(peripheral.onScan(allowDuplicates: true).listen((scanResult) {
-        return _bridge.publishScanResult(scanResult);
+        _bridge!.publishScanResult(scanResult);
       }));
     });
   }

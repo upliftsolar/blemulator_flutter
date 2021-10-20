@@ -11,7 +11,7 @@ class SimulationManager extends SimulationManagerBaseWithErrorChecks
         DiscoveryMixin,
         PeripheralRssiMixin,
         PeripheralMtuMixin {
-  SimulationManager(DartToPlatformBridge bridge) : super(bridge);
+  SimulationManager(DartToPlatformBridge? bridge) : super(bridge);
 
   void addSimulatedPeripheral(SimulatedPeripheral peripheral) {
     var mapEntry = _peripherals.putIfAbsent(peripheral.id, () => peripheral);
