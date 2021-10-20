@@ -6,6 +6,7 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:async/async.dart';
+import 'package:collection/src/iterable_extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:blemulator/blemulator.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart' as flutter_ble_lib;
