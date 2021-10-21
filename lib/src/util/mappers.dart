@@ -1,9 +1,9 @@
 part of internal;
 
 Map<String, dynamic> mapToCharacteristicJson(
-  String peripheralId,
+  String? peripheralId,
   SimulatedCharacteristic characteristic,
-  Uint8List value, {
+  Uint8List? value, {
   bool serializeDescriptors = false,
 }) {
   var characteristicMap = <String, dynamic>{

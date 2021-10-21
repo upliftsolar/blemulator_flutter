@@ -6,15 +6,15 @@ class ScanResult {
 
   final int rssi;
   final bool isConnectable;
-  final int txPowerLevel;
+  final int? txPowerLevel;
 
-  final Uint8List manufacturerData;
-  final Map<String, Uint8List> serviceData;
-  final List<String> serviceUuids;
+  final Uint8List? manufacturerData;
+  final Map<String, Uint8List>? serviceData;
+  final List<String>? serviceUuids;
 
-  final String localName;
-  final List<String> solicitedServiceUuids;
-  final List<String> overflowUuids;
+  final String? localName;
+  final List<String>? solicitedServiceUuids;
+  final List<String>? overflowUuids;
 
   ScanResult(ScanInfo scanInfo, SimulatedPeripheral peripheral)
       : name = peripheral.name,

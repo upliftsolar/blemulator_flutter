@@ -1,9 +1,9 @@
 part of internal;
 
 mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
-  Future<SimulatedCharacteristic> _findCharacteristicForId(
-      int characteristicIdentifier) async {
-    SimulatedCharacteristic targetCharacteristic;
+  Future<SimulatedCharacteristic?> _findCharacteristicForId(
+      int? characteristicIdentifier) async {
+    SimulatedCharacteristic? targetCharacteristic;
 
     for (var peripheral in _peripherals.values) {
       var characteristic = peripheral.characteristic(characteristicIdentifier);
@@ -18,16 +18,17 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
     return targetCharacteristic;
   }
 
-  SimulatedCharacteristic _findCharacteristicForServiceId(
-    int serviceIdentifier,
+  SimulatedCharacteristic? _findCharacteristicForServiceId(
+    int? serviceIdentifier,
     String characteristicUuid,
   ) {
     for (var peripheral in _peripherals.values) {
-      var characteristic =
-          peripheral.service(serviceIdentifier)?.characteristics()?.firstWhere(
-                (characteristic) => characteristic.uuid == characteristicUuid,
-                orElse: () => null,
-              );
+      var characteristic = peripheral
+          .service(serviceIdentifier)
+          ?.characteristics()
+          .firstWhereOrNull(
+            (characteristic) => characteristic.uuid == characteristicUuid,
+          );
 
       if (characteristic != null) {
         return characteristic;
@@ -37,18 +38,19 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
   }
 
   Future<CharacteristicResponse> _readCharacteristicForIdentifier(
-    int characteristicIdentifier,
-    String transactionId,
+    int? characteristicIdentifier,
+    String? transactionId,
   ) =>
       _saveCancelableOperation(transactionId, () async {
         var peripheral =
-            _findPeripheralWithCharacteristicId(characteristicIdentifier);
+            _findPeripheralWithCharacteristicId(characteristicIdentifier)!;
         await _errorIfPeripheralNull(peripheral);
         await _errorIfNotConnected(peripheral.id);
         await _errorIfDiscoveryNotDone(peripheral);
 
         var targetCharacteristic =
-            await _findCharacteristicForId(characteristicIdentifier);
+            await (_findCharacteristicForId(characteristicIdentifier)
+                as FutureOr<SimulatedCharacteristic>);
 
         await _errorIfCharacteristicIsNull(
             targetCharacteristic, characteristicIdentifier.toString());
@@ -59,18 +61,18 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
       });
 
   Future<CharacteristicResponse> _readCharacteristicForDevice(
-    String peripheralId,
+    String? peripheralId,
     String serviceUuid,
     String characteristicUUID,
-    String transactionId,
+    String? transactionId,
   ) =>
       _saveCancelableOperation(transactionId, () async {
         await _errorIfNotConnected(peripheralId);
-        var targetPeripheral = _peripherals[peripheralId];
+        var targetPeripheral = _peripherals[peripheralId!]!;
         await _errorIfDiscoveryNotDone(targetPeripheral);
 
         var targetCharacteristic = targetPeripheral.getCharacteristicForService(
-            serviceUuid, characteristicUUID);
+            serviceUuid, characteristicUUID)!;
 
         await _errorIfCharacteristicIsNull(
             targetCharacteristic, characteristicUUID);
@@ -81,19 +83,19 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
       });
 
   Future<CharacteristicResponse> _readCharacteristicForService(
-    int serviceIdentifier,
+    int? serviceIdentifier,
     String characteristicUUID,
-    String transactionId,
+    String? transactionId,
   ) =>
       _saveCancelableOperation(transactionId, () async {
         var targetCharacteristic = _findCharacteristicForServiceId(
-            serviceIdentifier, characteristicUUID);
+            serviceIdentifier, characteristicUUID)!;
 
         await _errorIfNotConnected(
-            _findPeripheralWithServiceId(serviceIdentifier).id);
+            _findPeripheralWithServiceId(serviceIdentifier)!.id);
 
         await _errorIfDiscoveryNotDone(
-            _findPeripheralWithServiceId(serviceIdentifier));
+            _findPeripheralWithServiceId(serviceIdentifier)!);
 
         await _errorIfCharacteristicIsNull(
             targetCharacteristic, characteristicUUID);
@@ -101,26 +103,27 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
         await _errorIfCharacteristicNotReadable(targetCharacteristic);
         var value = await targetCharacteristic.read();
         await _errorIfDisconnected(
-            _findPeripheralWithServiceId(serviceIdentifier).id);
+            _findPeripheralWithServiceId(serviceIdentifier)!.id);
         return CharacteristicResponse(targetCharacteristic, value);
       });
 
   Future<SimulatedCharacteristic> _writeCharacteristicForIdentifier(
-    int characteristicIdentifier,
-    Uint8List value,
-    String transactionId, {
+    int? characteristicIdentifier,
+    Uint8List? value,
+    String? transactionId, {
     bool withResponse = true,
   }) =>
       _saveCancelableOperation(transactionId, () async {
         var peripheral =
-            _findPeripheralWithCharacteristicId(characteristicIdentifier);
+            _findPeripheralWithCharacteristicId(characteristicIdentifier)!;
 
         await _errorIfPeripheralNull(peripheral);
         await _errorIfNotConnected(peripheral.id);
         await _errorIfDiscoveryNotDone(peripheral);
 
         var targetCharacteristic =
-            await _findCharacteristicForId(characteristicIdentifier);
+            await (_findCharacteristicForId(characteristicIdentifier)
+                as FutureOr<SimulatedCharacteristic>);
 
         await _errorIfCharacteristicIsNull(
             targetCharacteristic, characteristicIdentifier.toString());
@@ -137,20 +140,20 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
       });
 
   Future<SimulatedCharacteristic> _writeCharacteristicForDevice(
-    String peripheralId,
+    String? peripheralId,
     String serviceUuid,
     String characteristicUUID,
-    Uint8List value,
-    String transactionId, {
+    Uint8List? value,
+    String? transactionId, {
     bool withResponse = true,
   }) =>
       _saveCancelableOperation(transactionId, () async {
         await _errorIfNotConnected(peripheralId);
-        var targetPeripheral = _peripherals[peripheralId];
+        var targetPeripheral = _peripherals[peripheralId!]!;
         await _errorIfDiscoveryNotDone(targetPeripheral);
 
         var targetCharacteristic = targetPeripheral.getCharacteristicForService(
-            serviceUuid, characteristicUUID);
+            serviceUuid, characteristicUUID)!;
 
         await _errorIfCharacteristicIsNull(
             targetCharacteristic, characteristicUUID);
@@ -167,22 +170,22 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
       });
 
   Future<SimulatedCharacteristic> _writeCharacteristicForService(
-    int serviceIdentifier,
+    int? serviceIdentifier,
     String characteristicUUID,
-    Uint8List value,
-    String transactionId, {
+    Uint8List? value,
+    String? transactionId, {
     bool withResponse = true,
   }) =>
       _saveCancelableOperation(transactionId, () async {
         var targetCharacteristic = _findCharacteristicForServiceId(
-            serviceIdentifier, characteristicUUID);
+            serviceIdentifier, characteristicUUID)!;
 
         await _errorIfCharacteristicIsNull(
             targetCharacteristic, characteristicUUID);
         await _errorIfNotConnected(
-            _findPeripheralWithServiceId(serviceIdentifier).id);
+            _findPeripheralWithServiceId(serviceIdentifier)!.id);
         await _errorIfDiscoveryNotDone(
-            _findPeripheralWithServiceId(serviceIdentifier));
+            _findPeripheralWithServiceId(serviceIdentifier)!);
         if (withResponse) {
           await _errorIfCharacteristicNotWritableWithResponse(
               targetCharacteristic);
@@ -192,23 +195,24 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
         }
         await targetCharacteristic.write(value);
         await _errorIfDisconnected(
-            _findPeripheralWithServiceId(serviceIdentifier).id);
+            _findPeripheralWithServiceId(serviceIdentifier)!.id);
         return targetCharacteristic;
       });
 
   Future<void> _monitorCharacteristicForIdentifier(
-    int characteristicIdentifier,
-    String transactionId,
+    int? characteristicIdentifier,
+    String? transactionId,
   ) async {
     var targetCharacteristic =
-        await _findCharacteristicForId(characteristicIdentifier);
+        await (_findCharacteristicForId(characteristicIdentifier)
+            as FutureOr<SimulatedCharacteristic>);
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicIdentifier.toString());
     await _errorIfNotConnected(
-        _findPeripheralWithCharacteristicId(characteristicIdentifier).id);
+        _findPeripheralWithCharacteristicId(characteristicIdentifier)!.id);
     await _errorIfDiscoveryNotDone(
-        _findPeripheralWithCharacteristicId(characteristicIdentifier));
+        _findPeripheralWithCharacteristicId(characteristicIdentifier)!);
     await _errorIfCharacteristicNotNotifiable(targetCharacteristic);
     _monitoringSubscriptions.putIfAbsent(
       transactionId,
@@ -218,19 +222,19 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
           (value) async {
             try {
               await _errorIfDisconnected(
-                  _findPeripheralWithCharacteristicId(characteristicIdentifier)
+                  _findPeripheralWithCharacteristicId(characteristicIdentifier)!
                       .id);
 
-              await _bridge.publishCharacteristicUpdate(
-                _findPeripheralWithCharacteristicId(characteristicIdentifier)
+              await _bridge!.publishCharacteristicUpdate(
+                _findPeripheralWithCharacteristicId(characteristicIdentifier)!
                     .id,
                 targetCharacteristic,
                 value,
                 transactionId,
               );
             } on SimulatedBleError catch (e) {
-              await _bridge.publishCharacteristicMonitoringError(
-                _findPeripheralWithCharacteristicId(characteristicIdentifier)
+              await _bridge!.publishCharacteristicMonitoringError(
+                _findPeripheralWithCharacteristicId(characteristicIdentifier)!
                     .id,
                 characteristicIdentifier,
                 e,
@@ -239,13 +243,13 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
 
               await _monitoringSubscriptions[transactionId]
                   ?.subscription
-                  ?.cancel();
+                  .cancel();
               _monitoringSubscriptions.remove(transactionId);
             }
           },
           onError: (error) {
-            _bridge.publishCharacteristicMonitoringError(
-              _findPeripheralWithCharacteristicId(characteristicIdentifier).id,
+            _bridge!.publishCharacteristicMonitoringError(
+              _findPeripheralWithCharacteristicId(characteristicIdentifier)!.id,
               characteristicIdentifier,
               error,
               transactionId,
@@ -258,18 +262,18 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
   }
 
   Future<void> _monitorCharacteristicForDevice(
-    String peripheralId,
+    String? peripheralId,
     String serviceUuid,
     String characteristicUUID,
-    String transactionId,
+    String? transactionId,
   ) async {
     await _errorIfUnknown(peripheralId);
     await _errorIfNotConnected(peripheralId);
-    var targetPeripheral = _peripherals[peripheralId];
+    var targetPeripheral = _peripherals[peripheralId!]!;
     await _errorIfDiscoveryNotDone(targetPeripheral);
 
     var targetCharacteristic = targetPeripheral.getCharacteristicForService(
-        serviceUuid, characteristicUUID);
+        serviceUuid, characteristicUUID)!;
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicUUID);
@@ -283,14 +287,14 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
             try {
               await _errorIfDisconnected(peripheralId);
 
-              await _bridge.publishCharacteristicUpdate(
+              await _bridge!.publishCharacteristicUpdate(
                 peripheralId,
                 targetCharacteristic,
                 value,
                 transactionId,
               );
             } on SimulatedBleError catch (e) {
-              await _bridge.publishCharacteristicMonitoringError(
+              await _bridge!.publishCharacteristicMonitoringError(
                 peripheralId,
                 targetCharacteristic.id,
                 e,
@@ -299,12 +303,12 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
 
               await _monitoringSubscriptions[transactionId]
                   ?.subscription
-                  ?.cancel();
+                  .cancel();
               _monitoringSubscriptions.remove(transactionId);
             }
           },
           onError: (error) {
-            _bridge.publishCharacteristicMonitoringError(
+            _bridge!.publishCharacteristicMonitoringError(
               peripheralId,
               targetCharacteristic.id,
               error,
@@ -318,17 +322,17 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
   }
 
   Future<void> _monitorCharacteristicForService(
-    int serviceIdentifier,
+    int? serviceIdentifier,
     String characteristicUUID,
-    String transactionId,
+    String? transactionId,
   ) async {
     var targetCharacteristic =
-        _findCharacteristicForServiceId(serviceIdentifier, characteristicUUID);
+        _findCharacteristicForServiceId(serviceIdentifier, characteristicUUID)!;
 
     await _errorIfNotConnected(
-        _findPeripheralWithServiceId(serviceIdentifier).id);
+        _findPeripheralWithServiceId(serviceIdentifier)!.id);
     await _errorIfDiscoveryNotDone(
-        _findPeripheralWithServiceId(serviceIdentifier));
+        _findPeripheralWithServiceId(serviceIdentifier)!);
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicUUID);
     await _errorIfCharacteristicNotNotifiable(targetCharacteristic);
@@ -340,17 +344,17 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
           (value) async {
             try {
               await _errorIfDisconnected(
-                  _findPeripheralWithServiceId(serviceIdentifier).id);
+                  _findPeripheralWithServiceId(serviceIdentifier)!.id);
 
-              await _bridge.publishCharacteristicUpdate(
-                _findPeripheralWithServiceId(serviceIdentifier).id,
+              await _bridge!.publishCharacteristicUpdate(
+                _findPeripheralWithServiceId(serviceIdentifier)!.id,
                 targetCharacteristic,
                 value,
                 transactionId,
               );
             } on SimulatedBleError catch (e) {
-              await _bridge.publishCharacteristicMonitoringError(
-                _findPeripheralWithServiceId(serviceIdentifier).id,
+              await _bridge!.publishCharacteristicMonitoringError(
+                _findPeripheralWithServiceId(serviceIdentifier)!.id,
                 targetCharacteristic.id,
                 e,
                 transactionId,
@@ -358,13 +362,13 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
 
               await _monitoringSubscriptions[transactionId]
                   ?.subscription
-                  ?.cancel();
+                  .cancel();
               _monitoringSubscriptions.remove(transactionId);
             }
           },
           onError: (error) {
-            _bridge.publishCharacteristicMonitoringError(
-              _findPeripheralWithServiceId(serviceIdentifier).id,
+            _bridge!.publishCharacteristicMonitoringError(
+              _findPeripheralWithServiceId(serviceIdentifier)!.id,
               targetCharacteristic.id,
               error,
               transactionId,

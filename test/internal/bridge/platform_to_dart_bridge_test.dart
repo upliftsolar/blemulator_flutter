@@ -14,8 +14,8 @@ void main() {
   const REQUESTED_MTU = 33;
   const NEGOTIATED_MTU = 24;
 
-  SimulationManagerMock simulationManager;
-  PlatformToDartBridge platformToDartBridge;
+  late SimulationManagerMock simulationManager;
+  late PlatformToDartBridge platformToDartBridge;
 
   setUp(() {
     simulationManager = SimulationManagerMock();
@@ -48,7 +48,7 @@ void main() {
           .thenAnswer((_) => Future.value(NEGOTIATED_MTU));
 
       //when
-      int negotiatedMtu = await platformToDartBridge.dispatchPlatformCall(methodCall);
+      int? negotiatedMtu = await (platformToDartBridge.dispatchPlatformCall(methodCall) as FutureOr<int?>);
 
       //then
       expect(negotiatedMtu, NEGOTIATED_MTU);

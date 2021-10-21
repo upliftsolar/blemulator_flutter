@@ -1,8 +1,8 @@
 part of internal;
 
 class PlatformToDartBridge {
-  final SimulationManager _manager;
-  MethodChannel _platformToDartChannel;
+  final SimulationManager? _manager;
+  late MethodChannel _platformToDartChannel;
 
   PlatformToDartBridge(this._manager) {
     _platformToDartChannel = MethodChannel(ChannelName.platformToDart);
@@ -79,45 +79,45 @@ class PlatformToDartBridge {
   }
 
   Future<void> _createClient(MethodCall call) {
-    return _manager._createClient();
+    return _manager!._createClient();
   }
 
   Future<void> _destroyClient(MethodCall call) {
-    return _manager._destroyClient();
+    return _manager!._destroyClient();
   }
 
   Future<void> _startDeviceScan(MethodCall call) {
-    return _manager._startDeviceScan();
+    return _manager!._startDeviceScan();
   }
 
   Future<void> _stopDeviceScan(MethodCall call) {
-    return _manager._stopDeviceScan();
+    return _manager!._stopDeviceScan();
   }
 
   Future<void> _connectToDevice(MethodCall call) {
-    return _manager._connectToDevice(
-      call.arguments[ArgumentName.id] as String,
+    return _manager!._connectToDevice(
+      call.arguments[ArgumentName.id] as String?,
     );
   }
 
   Future<bool> _isDeviceConnected(MethodCall call) {
-    return _manager._isDeviceConnected(
-      call.arguments[ArgumentName.id] as String,
+    return _manager!._isDeviceConnected(
+      call.arguments[ArgumentName.id] as String?,
     );
   }
 
   Future<void> _disconnectOrCancelConnection(MethodCall call) {
-    return _manager._disconnectOrCancelConnection(
-      call.arguments[ArgumentName.id] as String,
+    return _manager!._disconnectOrCancelConnection(
+      call.arguments[ArgumentName.id] as String?,
     );
   }
 
   Future<List<dynamic>> _discoverAllServicesAndCharacteristics(
       MethodCall call) async {
     List<SimulatedService> services =
-        await _manager.discoverAllServicesAndCharacteristics(
-            call.arguments[SimulationArgumentName.id] as String,
-            call.arguments[SimulationArgumentName.transactionId] as String);
+        await (_manager!.discoverAllServicesAndCharacteristics(
+            call.arguments[SimulationArgumentName.id] as String?,
+            call.arguments[SimulationArgumentName.transactionId] as String?) as FutureOr<List<SimulatedService>>);
     dynamic mapped = services
         .map(
           (service) => <String, dynamic>{
@@ -143,7 +143,7 @@ class PlatformToDartBridge {
 
   Future<dynamic> _readCharacteristicForIdentifier(MethodCall call) async {
     Map<dynamic, dynamic> arguments = call.arguments;
-    return _manager
+    return _manager!
         ._readCharacteristicForIdentifier(
           arguments[SimulationArgumentName.characteristicIdentifier],
           arguments[SimulationArgumentName.transactionId],
@@ -157,7 +157,7 @@ class PlatformToDartBridge {
 
   Future<dynamic> _readCharacteristicForDevice(MethodCall call) async {
     Map<dynamic, dynamic> arguments = call.arguments;
-    return _manager
+    return _manager!
         ._readCharacteristicForDevice(
           arguments[SimulationArgumentName.deviceIdentifier],
           (arguments[SimulationArgumentName.serviceUuid] as String)
@@ -175,7 +175,7 @@ class PlatformToDartBridge {
 
   Future<dynamic> _readCharacteristicForService(MethodCall call) async {
     Map<dynamic, dynamic> arguments = call.arguments;
-    return _manager
+    return _manager!
         ._readCharacteristicForService(
           arguments[SimulationArgumentName.serviceId],
           (arguments[SimulationArgumentName.characteristicUuid] as String)
@@ -191,7 +191,7 @@ class PlatformToDartBridge {
 
   Future<dynamic> _writeCharacteristicForIdentifier(MethodCall call) async {
     Map<dynamic, dynamic> arguments = call.arguments;
-    return _manager
+    return _manager!
         ._writeCharacteristicForIdentifier(
           call.arguments[SimulationArgumentName.characteristicIdentifier],
           call.arguments[SimulationArgumentName.value],
@@ -206,7 +206,7 @@ class PlatformToDartBridge {
 
   Future<dynamic> _writeCharacteristicForDevice(MethodCall call) async {
     Map<dynamic, dynamic> arguments = call.arguments;
-    return _manager
+    return _manager!
         ._writeCharacteristicForDevice(
           arguments[SimulationArgumentName.deviceIdentifier],
           (arguments[SimulationArgumentName.serviceUuid] as String)
@@ -225,7 +225,7 @@ class PlatformToDartBridge {
 
   Future<dynamic> _writeCharacteristicForService(MethodCall call) async {
     Map<dynamic, dynamic> arguments = call.arguments;
-    return _manager
+    return _manager!
         ._writeCharacteristicForService(
           arguments[SimulationArgumentName.serviceId],
           (arguments[SimulationArgumentName.characteristicUuid] as String)
@@ -241,13 +241,13 @@ class PlatformToDartBridge {
   }
 
   Future<dynamic> _monitorCharacteristicForIdentifier(MethodCall call) =>
-      _manager._monitorCharacteristicForIdentifier(
+      _manager!._monitorCharacteristicForIdentifier(
         call.arguments[SimulationArgumentName.characteristicIdentifier],
         call.arguments[SimulationArgumentName.transactionId],
       );
 
   Future<dynamic> _monitorCharacteristicForDevice(MethodCall call) =>
-      _manager._monitorCharacteristicForDevice(
+      _manager!._monitorCharacteristicForDevice(
         call.arguments[SimulationArgumentName.deviceIdentifier],
         (call.arguments[SimulationArgumentName.serviceUuid] as String)
             .toLowerCase(),
@@ -257,7 +257,7 @@ class PlatformToDartBridge {
       );
 
   Future<dynamic> _monitorCharacteristicForService(MethodCall call) =>
-      _manager._monitorCharacteristicForService(
+      _manager!._monitorCharacteristicForService(
         call.arguments[SimulationArgumentName.serviceId],
         (call.arguments[SimulationArgumentName.characteristicUuid] as String)
             .toLowerCase(),
@@ -265,31 +265,31 @@ class PlatformToDartBridge {
       );
 
   Future<int> _readRssiForDevice(MethodCall call) {
-    return _manager._readRssiForDevice(
-      call.arguments[ArgumentName.id] as String,
+    return _manager!._readRssiForDevice(
+      call.arguments[ArgumentName.id] as String?,
     );
   }
 
-  Future<int> _requestMtuForDevice(MethodCall call) {
-    return _manager.requestMtuForDevice(
-      call.arguments[SimulationArgumentName.deviceIdentifier] as String,
-      call.arguments[SimulationArgumentName.mtu] as int,
+  Future<int?> _requestMtuForDevice(MethodCall call) {
+    return _manager!.requestMtuForDevice(
+      call.arguments[SimulationArgumentName.deviceIdentifier] as String?,
+      call.arguments[SimulationArgumentName.mtu] as int?,
     );
   }
 
   Future<void> _cancelTransaction(MethodCall call) {
-    return _manager.cancelTransactionIfExists(
+    return _manager!.cancelTransactionIfExists(
         call.arguments[SimulationArgumentName.transactionId]);
   }
 
-  Future<dynamic> _readDescriptorForIdentifier(MethodCall call) => _manager
+  Future<dynamic> _readDescriptorForIdentifier(MethodCall call) => _manager!
       ._readDescriptorForIdentifier(
         call.arguments[SimulationArgumentName.descriptorId],
         call.arguments[SimulationArgumentName.transactionId],
       )
       .then((response) => mapToDescriptorJson(response));
 
-  Future<dynamic> _readDescriptorForCharacteristic(MethodCall call) => _manager
+  Future<dynamic> _readDescriptorForCharacteristic(MethodCall call) => _manager!
       ._readDescriptorForCharacteristic(
         call.arguments[SimulationArgumentName.characteristicIdentifier],
         (call.arguments[SimulationArgumentName.descriptorUuid] as String)
@@ -298,7 +298,7 @@ class PlatformToDartBridge {
       )
       .then((response) => mapToDescriptorJson(response));
 
-  Future<dynamic> _readDescriptorForService(MethodCall call) => _manager
+  Future<dynamic> _readDescriptorForService(MethodCall call) => _manager!
       ._readDescriptorForService(
         call.arguments[SimulationArgumentName.serviceId],
         (call.arguments[SimulationArgumentName.characteristicUuid] as String)
@@ -309,7 +309,7 @@ class PlatformToDartBridge {
       )
       .then((response) => mapToDescriptorJson(response));
 
-  Future<dynamic> _readDescriptorForDevice(MethodCall call) => _manager
+  Future<dynamic> _readDescriptorForDevice(MethodCall call) => _manager!
       ._readDescriptorForDevice(
         call.arguments[SimulationArgumentName.deviceIdentifier],
         (call.arguments[SimulationArgumentName.serviceUuid] as String)
@@ -322,7 +322,7 @@ class PlatformToDartBridge {
       )
       .then((response) => mapToDescriptorJson(response));
 
-  Future<dynamic> _writeDescriptorForIdentifier(MethodCall call) => _manager
+  Future<dynamic> _writeDescriptorForIdentifier(MethodCall call) => _manager!
       ._writeDescriptorForIdentifier(
         call.arguments[SimulationArgumentName.descriptorId],
         call.arguments[SimulationArgumentName.value],
@@ -330,7 +330,7 @@ class PlatformToDartBridge {
       )
       .then((response) => mapToDescriptorJson(response));
 
-  Future<dynamic> _writeDescriptorForCharacteristic(MethodCall call) => _manager
+  Future<dynamic> _writeDescriptorForCharacteristic(MethodCall call) => _manager!
       ._writeDescriptorForCharacteristic(
         call.arguments[SimulationArgumentName.characteristicIdentifier],
         (call.arguments[SimulationArgumentName.descriptorUuid] as String)
@@ -340,7 +340,7 @@ class PlatformToDartBridge {
       )
       .then((response) => mapToDescriptorJson(response));
 
-  Future<dynamic> _writeDescriptorForService(MethodCall call) => _manager
+  Future<dynamic> _writeDescriptorForService(MethodCall call) => _manager!
       ._writeDescriptorForService(
         call.arguments[SimulationArgumentName.serviceId],
         (call.arguments[SimulationArgumentName.characteristicUuid] as String)
@@ -352,7 +352,7 @@ class PlatformToDartBridge {
       )
       .then((response) => mapToDescriptorJson(response));
 
-  Future<dynamic> _writeDescriptorForDevice(MethodCall call) => _manager
+  Future<dynamic> _writeDescriptorForDevice(MethodCall call) => _manager!
       ._writeDescriptorForDevice(
         call.arguments[SimulationArgumentName.deviceIdentifier],
         (call.arguments[SimulationArgumentName.serviceUuid] as String)

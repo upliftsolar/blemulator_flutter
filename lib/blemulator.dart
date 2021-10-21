@@ -8,8 +8,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:math';
-
-import 'package:flutter/foundation.dart';
+import 'package:collection/collection.dart';
 import 'package:blemulator/src/id_generator.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart' as flutter_ble_lib;
 

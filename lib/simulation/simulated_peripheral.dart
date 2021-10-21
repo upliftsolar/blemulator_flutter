@@ -3,15 +3,15 @@ part of blemulator;
 class ScanInfo {
   int rssi;
   bool isConnectable;
-  int txPowerLevel;
+  int? txPowerLevel;
 
-  Uint8List manufacturerData;
-  Map<String, Uint8List> serviceData;
-  List<String> serviceUuids;
+  Uint8List? manufacturerData;
+  Map<String, Uint8List>? serviceData;
+  List<String>? serviceUuids;
 
-  String localName;
-  List<String> solicitedServiceUuids;
-  List<String> overflowUuids;
+  String? localName;
+  List<String>? solicitedServiceUuids;
+  List<String>? overflowUuids;
 
   ScanInfo({
     this.rssi = defaultRssi,
@@ -30,12 +30,12 @@ abstract class SimulatedPeripheral {
   final String name;
   final String id;
   Duration advertisementInterval;
-  ScanInfo scanInfo;
-  int mtu;
+  ScanInfo? scanInfo;
+  int? mtu;
 
-  Map<int, SimulatedService> _services;
-  Map<int, SimulatedCharacteristic> _characteristics;
-  Map<int, SimulatedDescriptor> _descriptors;
+  late Map<int?, SimulatedService> _services;
+  late Map<int, SimulatedCharacteristic> _characteristics;
+  late Map<int, SimulatedDescriptor> _descriptors;
   final StreamController<flutter_ble_lib.PeripheralConnectionState>
       _connectionStateStreamController;
 
@@ -43,18 +43,18 @@ abstract class SimulatedPeripheral {
   bool _discoveryDone = false;
 
   SimulatedPeripheral({
-    @required this.name,
-    @required this.id,
-    @required this.advertisementInterval,
-    @required List<SimulatedService> services,
+    required this.name,
+    required this.id,
+    required this.advertisementInterval,
+    required List<SimulatedService> services,
     this.scanInfo,
   }) : _connectionStateStreamController = StreamController.broadcast() {
     mtu = defaultMtu;
     scanInfo ??= ScanInfo();
 
-    scanInfo.serviceUuids ??= [];
+    scanInfo!.serviceUuids ??= [];
 
-    scanInfo.serviceUuids.addAll(services
+    scanInfo!.serviceUuids!.addAll(services
         .where((service) => service.isAdvertised)
         .map((service) => service.uuid));
 
@@ -89,7 +89,7 @@ abstract class SimulatedPeripheral {
   }
 
   ScanResult scanResult() {
-    return ScanResult(scanInfo, this);
+    return ScanResult(scanInfo!, this);
   }
 
   Future<bool> onConnectRequest() async {
@@ -124,43 +124,41 @@ abstract class SimulatedPeripheral {
     return _services.values.toList();
   }
 
-  SimulatedService service(int id) => _services[id];
+  SimulatedService? service(int? id) => _services[id];
 
-  SimulatedCharacteristic characteristic(int characteristicIdentifier) =>
-      _characteristics[characteristicIdentifier];
+  SimulatedCharacteristic? characteristic(int? characteristicIdentifier) =>
+      _characteristics[characteristicIdentifier!];
 
-  SimulatedDescriptor descriptor(int descriptorIdentifier) =>
-      _descriptors[descriptorIdentifier];
+  SimulatedDescriptor? descriptor(int? descriptorIdentifier) =>
+      _descriptors[descriptorIdentifier!];
 
-  bool hasService(int id) => _services.containsKey(id);
+  bool hasService(int? id) => _services.containsKey(id);
 
   bool hasServiceWithUuid(String uuid) {
-    var service = _services.values.firstWhere(
+    var service = _services.values.firstWhereOrNull(
       (service) => service.uuid.toLowerCase() == uuid.toLowerCase(),
-      orElse: () => null,
     );
     return service != null;
   }
 
-  bool hasCharacteristic(int id) => _characteristics.containsKey(id);
+  bool hasCharacteristic(int? id) => _characteristics.containsKey(id);
 
   bool hasCharacteristicWithUuid(String uuid) {
-    var characteristic = _characteristics.values.firstWhere(
+    var characteristic = _characteristics.values.firstWhereOrNull(
       (characteristic) =>
           characteristic.uuid.toLowerCase() == uuid.toLowerCase(),
-      orElse: () => null,
     );
     return characteristic != null;
   }
 
-  bool hasDescriptor(int id) => _descriptors.containsKey(id);
+  bool hasDescriptor(int? id) => _descriptors.containsKey(id);
 
   bool hasDescriptorWithUuid(
     String uuid, {
-    String characteristicUuid,
-    int characteristicId,
+    String? characteristicUuid,
+    int? characteristicId,
   }) {
-    var descriptor = _descriptors.values.firstWhere(
+    var descriptor = _descriptors.values.firstWhereOrNull(
       (descriptor) {
         var found = descriptor.uuid.toLowerCase() == uuid.toLowerCase();
         if (characteristicUuid != null) {
@@ -174,25 +172,23 @@ abstract class SimulatedPeripheral {
 
         return found;
       },
-      orElse: () => null,
     );
     return descriptor != null;
   }
 
-  SimulatedCharacteristic getCharacteristicForService(
+  SimulatedCharacteristic? getCharacteristicForService(
     String serviceUuid,
     String characteristicUuid,
   ) {
-    SimulatedCharacteristic targetCharacteristic;
+    SimulatedCharacteristic? targetCharacteristic;
 
     servicesLoop:
     for (var service in services()) {
       if (service.uuid.toLowerCase() == serviceUuid.toLowerCase()) {
-        var characteristic = service.characteristics().firstWhere(
+        var characteristic = service.characteristics().firstWhereOrNull(
             (characteristic) =>
                 characteristic.uuid.toLowerCase() ==
-                characteristicUuid.toLowerCase(),
-            orElse: () => null);
+                characteristicUuid.toLowerCase());
 
         if (characteristic != null) {
           targetCharacteristic = characteristic;
@@ -203,9 +199,9 @@ abstract class SimulatedPeripheral {
     return targetCharacteristic;
   }
 
-  Future<int> rssi() async => scanInfo.rssi;
+  Future<int> rssi() async => scanInfo!.rssi;
 
-  Future<int> requestMtu(int requestedMtu) async {
+  Future<int?> requestMtu(int requestedMtu) async {
     mtu = _negotiateMtu(requestedMtu);
     return mtu;
   }
