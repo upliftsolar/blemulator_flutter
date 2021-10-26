@@ -114,10 +114,10 @@ class PlatformToDartBridge {
 
   Future<List<dynamic>> _discoverAllServicesAndCharacteristics(
       MethodCall call) async {
-    List<SimulatedService> services =
-        await (_manager!.discoverAllServicesAndCharacteristics(
+    List<SimulatedService> services = await (_manager!
+        .discoverAllServicesAndCharacteristics(
             call.arguments[SimulationArgumentName.id] as String?,
-            call.arguments[SimulationArgumentName.transactionId] as String?) as FutureOr<List<SimulatedService>>);
+            call.arguments[SimulationArgumentName.transactionId] as String?));
     dynamic mapped = services
         .map(
           (service) => <String, dynamic>{
@@ -330,15 +330,16 @@ class PlatformToDartBridge {
       )
       .then((response) => mapToDescriptorJson(response));
 
-  Future<dynamic> _writeDescriptorForCharacteristic(MethodCall call) => _manager!
-      ._writeDescriptorForCharacteristic(
-        call.arguments[SimulationArgumentName.characteristicIdentifier],
-        (call.arguments[SimulationArgumentName.descriptorUuid] as String)
-            .toLowerCase(),
-        call.arguments[SimulationArgumentName.value],
-        call.arguments[SimulationArgumentName.transactionId],
-      )
-      .then((response) => mapToDescriptorJson(response));
+  Future<dynamic> _writeDescriptorForCharacteristic(MethodCall call) =>
+      _manager!
+          ._writeDescriptorForCharacteristic(
+            call.arguments[SimulationArgumentName.characteristicIdentifier],
+            (call.arguments[SimulationArgumentName.descriptorUuid] as String)
+                .toLowerCase(),
+            call.arguments[SimulationArgumentName.value],
+            call.arguments[SimulationArgumentName.transactionId],
+          )
+          .then((response) => mapToDescriptorJson(response));
 
   Future<dynamic> _writeDescriptorForService(MethodCall call) => _manager!
       ._writeDescriptorForService(
