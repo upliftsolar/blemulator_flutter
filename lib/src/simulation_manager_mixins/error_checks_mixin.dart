@@ -80,7 +80,7 @@ mixin ErrorChecksMixin on SimulationManagerBase {
   }
 
   Future<void> _errorIfCharacteristicIsNull(
-    SimulatedCharacteristic characteristic,
+    SimulatedCharacteristic? characteristic,
     String characteristicId,
   ) async {
     if (characteristic == null) {
