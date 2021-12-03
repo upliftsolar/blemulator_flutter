@@ -49,12 +49,11 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
         await _errorIfDiscoveryNotDone(peripheral);
 
         var targetCharacteristic =
-            await (_findCharacteristicForId(characteristicIdentifier)
-                as FutureOr<SimulatedCharacteristic>);
+            await _findCharacteristicForId(characteristicIdentifier);
 
         await _errorIfCharacteristicIsNull(
             targetCharacteristic, characteristicIdentifier.toString());
-        await _errorIfCharacteristicNotReadable(targetCharacteristic);
+        await _errorIfCharacteristicNotReadable(targetCharacteristic!);
         var value = await targetCharacteristic.read();
         await _errorIfDisconnected(peripheral.id);
         return CharacteristicResponse(targetCharacteristic, value);
@@ -122,17 +121,16 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
         await _errorIfDiscoveryNotDone(peripheral);
 
         var targetCharacteristic =
-            await (_findCharacteristicForId(characteristicIdentifier)
-                as FutureOr<SimulatedCharacteristic>);
+            await _findCharacteristicForId(characteristicIdentifier);
 
         await _errorIfCharacteristicIsNull(
             targetCharacteristic, characteristicIdentifier.toString());
         if (withResponse) {
           await _errorIfCharacteristicNotWritableWithResponse(
-              targetCharacteristic);
+              targetCharacteristic!);
         } else {
           await _errorIfCharacteristicNotWritableWithoutResponse(
-              targetCharacteristic);
+              targetCharacteristic!);
         }
         await targetCharacteristic.write(value);
         await _errorIfDisconnected(peripheral.id);
@@ -204,8 +202,7 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
     String? transactionId,
   ) async {
     var targetCharacteristic =
-        await (_findCharacteristicForId(characteristicIdentifier)
-            as FutureOr<SimulatedCharacteristic>);
+        await _findCharacteristicForId(characteristicIdentifier);
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicIdentifier.toString());
@@ -213,7 +210,7 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
         _findPeripheralWithCharacteristicId(characteristicIdentifier)!.id);
     await _errorIfDiscoveryNotDone(
         _findPeripheralWithCharacteristicId(characteristicIdentifier)!);
-    await _errorIfCharacteristicNotNotifiable(targetCharacteristic);
+    await _errorIfCharacteristicNotNotifiable(targetCharacteristic!);
     _monitoringSubscriptions.putIfAbsent(
       transactionId,
       () => _CharacteristicMonitoringSubscription(
