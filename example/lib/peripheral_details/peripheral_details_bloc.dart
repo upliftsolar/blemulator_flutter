@@ -10,7 +10,8 @@ class PeripheralDetailsBloc
   final BleAdapter _bleAdapter;
   final BlePeripheral _chosenPeripheral;
 
-  PeripheralDetailsBloc(this._bleAdapter, this._chosenPeripheral) {
+  PeripheralDetailsBloc(this._bleAdapter, this._chosenPeripheral)
+      : super(PeripheralDetailsState(peripheral: _chosenPeripheral)) {
     try {
       //TODO check if device is connected
       _bleAdapter
@@ -27,10 +28,6 @@ class PeripheralDetailsBloc
       //  so it should be handled the same way as disconnection.
     }
   }
-
-  @override
-  PeripheralDetailsState get initialState =>
-      PeripheralDetailsState(peripheral: _chosenPeripheral);
 
   @override
   Stream<PeripheralDetailsState> mapEventToState(

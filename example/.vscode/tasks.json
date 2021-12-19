@@ -1,0 +1,23 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+   	{
+			"type": "flutter",
+			"command": "flutter",
+			"args": [
+				"pub", "outdated"
+			],
+			"problemMatcher": [],
+			"label": "flutter: flutter pub outdated"
+		},
+		{
+			"type": "flutter",
+			"command": "flutter",
+			"args": [
+                "pub", "upgrade","--major-versions"
+			],
+			"problemMatcher": [],
+			"label": "flutter: flutter pub upgrade"
+		}
+	]
+}

@@ -20,7 +20,7 @@ class DevicesBloc {
   StreamSubscription<ScanResult> _scanSubscription;
   StreamSubscription _devicePickerSubscription;
 
-  ValueObservable<List<BleDevice>> get visibleDevices =>
+  ValueStream<List<BleDevice>> get visibleDevices =>
       _visibleDevicesController.stream;
 
   Sink<BleDevice> get devicePicker => _devicePickerController.sink;

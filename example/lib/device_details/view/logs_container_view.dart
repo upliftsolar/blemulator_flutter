@@ -1,11 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:blemulator_example/device_details/device_details_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
 class LogsContainerView extends StatelessWidget {
-
-  final Observable<List<DebugLog>> _logs;
+  final Stream<List<DebugLog>> _logs;
 
   LogsContainerView(this._logs);
 

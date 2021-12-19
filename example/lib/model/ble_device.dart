@@ -8,7 +8,7 @@ abstract class BleDevice {
   int counter = 0;
   final String name;
   DeviceCategory _category;
-  bool _isConnected = false;
+  final bool _isConnected = false;
   Peripheral peripheral;
 
   bool get isConnected => _isConnected;

@@ -9,10 +9,7 @@ class PeripheralListBloc
   final BleAdapter _bleAdapter;
   StreamSubscription _blePeripheralsSubscription;
 
-  PeripheralListBloc(this._bleAdapter);
-
-  @override
-  PeripheralListState get initialState => PeripheralListState.initial();
+  PeripheralListBloc(this._bleAdapter) : super(PeripheralListState.initial());
 
   @override
   Stream<PeripheralListState> mapEventToState(
@@ -34,7 +31,8 @@ class PeripheralListBloc
         _bleAdapter.blePeripherals.listen((BlePeripheral peripheral) {
       add(NewPeripheralScan(peripheral));
     });
-    yield PeripheralListState(peripherals: state.peripherals, scanningEnabled: true);
+    yield PeripheralListState(
+        peripherals: state.peripherals, scanningEnabled: true);
   }
 
   Stream<PeripheralListState> _mapStopPeripheralScanToState(

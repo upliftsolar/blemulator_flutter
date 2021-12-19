@@ -14,7 +14,7 @@ class PeripheralListScreen extends StatelessWidget {
         title: Text('Bluetooth peripherals'),
         actions: <Widget>[
           BlocBuilder<PeripheralListBloc, PeripheralListState>(
-            condition: (previousState, state) {
+            buildWhen: (previousState, state) {
               return previousState.scanningEnabled != state.scanningEnabled;
             },
             builder: (context, state) {
@@ -34,7 +34,7 @@ class PeripheralListScreen extends StatelessWidget {
         ],
       ),
       body: BlocBuilder<PeripheralListBloc, PeripheralListState>(
-        condition: (previousState, state) {
+        buildWhen: (previousState, state) {
           return previousState.peripherals != state.peripherals;
         },
         builder: (context, state) {
